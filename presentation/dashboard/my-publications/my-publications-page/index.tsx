@@ -4,7 +4,6 @@ import { useState } from 'react';
 import { Plus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { TypographyH1, TypographyLead } from '@/components/ui/typography';
-import { petCards } from '@/presentation/dashboard/catalog-data';
 import {
   Sheet,
   SheetContent,
@@ -14,11 +13,11 @@ import {
 } from '@/components/ui/sheet';
 import { CreatePetForm } from '../create-pet-form';
 import { MyPublicationCard } from '../my-publication-card';
+import { useGetMascotasQuery } from '@/modules/pets/domain/hooks/usePetQueries';
 
 export function MyPublicationsPage() {
   const [isOpen, setIsOpen] = useState(false);
-  // Using some dummy data from the existing catalog
-  const myPets = petCards.slice(0, 3);
+  const { data: myPets = [], isLoading, isError } = useGetMascotasQuery();
 
   return (
     <div className="min-h-screen bg-background text-foreground">
@@ -52,7 +51,15 @@ export function MyPublicationsPage() {
             </Sheet>
           </div>
 
-          {myPets.length > 0 ? (
+          {isLoading ? (
+            <div className="rounded-2xl border border-border bg-surface p-8 text-center text-muted-foreground shadow-sm">
+              Cargando tus publicaciones desde el backend...
+            </div>
+          ) : isError ? (
+            <div className="rounded-2xl border border-red-200 bg-red-50 p-8 text-center text-red-700 shadow-sm">
+              No se pudieron cargar tus publicaciones.
+            </div>
+          ) : myPets.length > 0 ? (
             <section className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
               {myPets.map((pet) => (
                 <MyPublicationCard
@@ -76,7 +83,7 @@ export function MyPublicationsPage() {
               </div>
               <h3 className="text-xl font-semibold text-foreground mb-2">No tienes publicaciones</h3>
               <p className="text-muted-foreground max-w-sm">
-                Aún no has registrado ninguna mascota. Haz clic en "Nueva Publicación" para empezar.
+                Aún no has registrado ninguna mascota. Haz clic en Nueva Publicación para empezar.
               </p>
             </div>
           )}

@@ -1,15 +1,27 @@
-import { PetAge, PetSpecies } from "@/core/shared";
+export interface Foto {
+  id: number;
+  url_imagen: string;
+}
 
-export interface Pet {
-  id: string;
-  name: string;
-  species: PetSpecies;
-  breed: string;
-  age: PetAge;
-  location: string;
-  distance: string;
-  badge: string;
-  image: string;
-  gender: 'male' | 'female';
-  favorite?: boolean;
+export interface Mascota {
+  id: number;
+  nombre: string;
+  especie: string;
+  raza: string;
+  descripcion: string;
+  estado: 'DISPONIBLE' | 'ADOPTADO';
+  publicador: number;
+  fotos: Foto[];
+}
+
+export interface CreateMascotaRequest {
+  nombre: string;
+  especie: string;
+  raza: string;
+  descripcion: string;
+}
+
+export interface UpdateMascotaRequest extends Partial<CreateMascotaRequest> {
+  id: number;
+  estado?: 'DISPONIBLE' | 'ADOPTADO';
 }

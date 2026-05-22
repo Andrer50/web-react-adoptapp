@@ -1,5 +1,6 @@
 'use client';
 
+import { useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { Mail, Lock } from 'lucide-react';
@@ -8,17 +9,38 @@ import { Button } from '@/components/ui/button';
 import { AppInputGroup } from '@/components/ui/InputGroup';
 import { TypographyH1, TypographyLead, TypographyH2, TypographyMuted } from '@/components/ui/typography';
 import { useRouter } from 'next/navigation';
+import { signIn } from 'next-auth/react';
+import { toast } from 'sonner';
+import { loginSchema } from '@/modules/auth/features/validations';
+import { LoginRequest } from '@/core/auth/interfaces';
 
 export default function LoginPage() {
   const router = useRouter();
-  const formik = useFormik({
+  const [authError, setAuthError] = useState<string | null>(null);
+  const formik = useFormik<LoginRequest>({
     initialValues: {
       email: '',
       password: '',
     },
-    onSubmit: (values) => {
-      // TODO: Conectar con el endpoint real de autenticacion.
-      console.log('Datos de inicio de sesion', values);
+    validationSchema: loginSchema,
+    onSubmit: async (values, helpers) => {
+      setAuthError(null);
+
+      const result = await signIn('credentials', {
+        redirect: false,
+        email: values.email,
+        password: values.password,
+      });
+
+      if (result?.error) {
+        setAuthError(result.error);
+        toast.error((result as any).error || 'Error al iniciar sesión');
+        helpers.setSubmitting(false);
+        return;
+      }
+
+      toast.success('Sesión iniciada');
+      router.push('/dashboard/home');
     },
   });
 
@@ -54,19 +76,22 @@ export default function LoginPage() {
           {/* Formulario */}
           <form className="w-full space-y-5" onSubmit={formik.handleSubmit}>
             <AppInputGroup
-              label="Correo electronico"
+              label="Correo electrónico"
               icon={<Mail className="h-5 w-5" strokeWidth={1.5} />}
               inputProps={{
                 id: 'email',
                 name: 'email',
                 type: 'email',
-                placeholder: 'tu@ejemplo.com',
+                placeholder: 'correo@ejemplo.com',
                 value: formik.values.email,
                 onChange: formik.handleChange,
                 onBlur: formik.handleBlur,
                 required: true,
               }}
             />
+            {formik.touched.email && formik.errors.email ? (
+              <p className="text-sm mt-1 text-red-600">{formik.errors.email}</p>
+            ) : null}
 
             <AppInputGroup
               label={
@@ -93,14 +118,23 @@ export default function LoginPage() {
                 required: true,
               }}
             />
+            {formik.touched.password && formik.errors.password ? (
+              <p className="text-sm mt-1 text-red-600">{formik.errors.password}</p>
+            ) : null}
 
             <Button
-              onClick={() => router.push("/dashboard/home")}
+              type="submit"
               className="w-full bg-primary hover:bg-primary-hover text-on-primary font-bold py-3.5 px-4 rounded-xl transition-colors focus:ring-4 focus:ring-primary/20 outline-none mt-4 shadow-sm"
             >
               Iniciar sesion
             </Button>
           </form>
+
+          {authError ? (
+            <p className="mt-4 w-full rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm font-medium text-red-700">
+              {authError}
+            </p>
+          ) : null}
 
           {/* Separador */}
           <div className="w-full flex items-center my-8">
@@ -132,7 +166,7 @@ export default function LoginPage() {
 
           <div className="mt-8 text-center text-sm text-muted-foreground">
             No tienes una cuenta?{' '}
-            <Link href="#" className="font-bold text-primary hover:text-primary-hover transition-colors">
+            <Link href="/register" className="font-bold text-primary hover:text-primary-hover transition-colors">
               Registrate
             </Link>
           </div>

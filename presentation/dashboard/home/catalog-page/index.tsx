@@ -13,22 +13,19 @@ import {
 import { TypographyH1, TypographyLead, TypographySmall } from '@/components/ui/typography';
 import { FiltersDrawer } from '../filter-drawer';
 import { PetCard } from '../pet-card';
-import { petCards } from '../../catalog-data';
 import { sortOptions } from '@/modules/pets/features/constants';
+import { useGetMascotasQuery } from '@/modules/pets/domain/hooks/usePetQueries';
 
 const defaultSpecies = ['dogs', 'cats'];
 
 export function CatalogPage() {
-    const [favorites, setFavorites] = useState<Record<string, boolean>>({
-        barnaby: false,
-        marmalade: false,
-        sunny: false,
-    });
+    const { data: petCards = [], isLoading, isError } = useGetMascotasQuery();
+    const [favorites, setFavorites] = useState<Record<number, boolean>>({});
     const [selectedSpecies, setSelectedSpecies] = useState<string[]>(defaultSpecies);
     const [selectedAge, setSelectedAge] = useState<string | null>('puppy');
     const [selectedSize, setSelectedSize] = useState('all');
 
-    const toggleFavorite = (id: string) => {
+    const toggleFavorite = (id: number) => {
         setFavorites((current) => ({ ...current, [id]: !current[id] }));
     };
 
@@ -86,11 +83,21 @@ export function CatalogPage() {
                         </div>
                     </div>
 
-                    <section className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
-                        {petCards.map((pet) => (
-                            <PetCard key={pet.id} pet={pet} isFavorite={favorites[pet.id]} onToggleFavorite={toggleFavorite} />
-                        ))}
-                    </section>
+                    {isLoading ? (
+                        <div className="rounded-2xl border border-border bg-surface p-8 text-center text-muted-foreground shadow-sm">
+                            Cargando mascotas desde el backend...
+                        </div>
+                    ) : isError ? (
+                        <div className="rounded-2xl border border-red-200 bg-red-50 p-8 text-center text-red-700 shadow-sm">
+                            No se pudieron cargar las mascotas.
+                        </div>
+                    ) : (
+                        <section className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
+                            {petCards.map((pet) => (
+                                <PetCard key={pet.id} pet={pet} isFavorite={favorites[pet.id] ?? false} onToggleFavorite={toggleFavorite} />
+                            ))}
+                        </section>
+                    )}
 
                     <div className="flex justify-center pb-6 pt-2">
                         <Button

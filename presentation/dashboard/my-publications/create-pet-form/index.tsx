@@ -12,12 +12,14 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { ageFilters } from '@/modules/pets/features/constants';
+import { useCreateMascotaMutation } from '@/modules/pets/domain/hooks/usePetMutations';
 
 interface CreatePetFormProps {
   onSuccess: () => void;
 }
 
 export function CreatePetForm({ onSuccess }: CreatePetFormProps) {
+  const createMascotaMutation = useCreateMascotaMutation();
   const formik = useFormik({
     initialValues: {
       name: '',
@@ -29,9 +31,19 @@ export function CreatePetForm({ onSuccess }: CreatePetFormProps) {
       distance: '',
       badge: '',
       image: '',
+      description: '',
     },
-    onSubmit: (values) => {
-      console.log('Nueva publicación:', values);
+    onSubmit: async (values, helpers) => {
+      await createMascotaMutation.mutateAsync({
+        nombre: values.name,
+        especie: values.species,
+        raza: values.breed,
+        descripcion:
+          values.description ||
+          [values.badge, values.location, values.distance].filter(Boolean).join(' • '),
+      });
+
+      helpers.resetForm();
       onSuccess();
     },
   });
@@ -61,10 +73,9 @@ export function CreatePetForm({ onSuccess }: CreatePetFormProps) {
             <SelectValue placeholder="Selecciona una especie" />
           </SelectTrigger>
           <SelectContent className="rounded-xl border-border">
-            <SelectItem value="dogs">Perro</SelectItem>
-            <SelectItem value="cats">Gato</SelectItem>
-            <SelectItem value="birds">Ave</SelectItem>
-            <SelectItem value="other">Otro</SelectItem>
+            <SelectItem value="DOG">Perro</SelectItem>
+            <SelectItem value="CAT">Gato</SelectItem>
+            <SelectItem value="BIRD">Ave</SelectItem>
           </SelectContent>
         </Select>
       </div>
@@ -143,6 +154,17 @@ export function CreatePetForm({ onSuccess }: CreatePetFormProps) {
       </div>
 
       <AppInputGroup
+        label="Descripcion"
+        inputProps={{
+          id: 'description',
+          name: 'description',
+          placeholder: 'Cuenta un poco sobre la mascota',
+          value: formik.values.description,
+          onChange: formik.handleChange,
+        }}
+      />
+
+      <AppInputGroup
         label="Etiqueta"
         inputProps={{
           id: 'badge',
@@ -169,9 +191,10 @@ export function CreatePetForm({ onSuccess }: CreatePetFormProps) {
       <div className="pt-4 pb-2">
         <Button
           type="submit"
+          disabled={createMascotaMutation.isPending}
           className="w-full h-12 rounded-xl font-bold bg-primary hover:bg-primary-hover text-white shadow-sm"
         >
-          Publicar Mascota
+          {createMascotaMutation.isPending ? 'Publicando...' : 'Publicar Mascota'}
         </Button>
       </div>
     </form>

@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { Dog, Heart, House, LogOut, PawPrint } from 'lucide-react';
+import { signOut } from 'next-auth/react';
 import {
     Sidebar,
     SidebarContent,
@@ -85,7 +86,11 @@ export function DashboardSidebar() {
                             <p className="truncate text-xs text-muted-foreground">Administradora</p>
                         </div>
                     </div>
-                    <Button variant="ghost" className="mt-4 h-10 w-full justify-start px-3 text-muted-foreground hover:text-foreground">
+                    <Button
+                        variant="ghost"
+                        className="mt-4 h-10 w-full justify-start px-3 text-muted-foreground hover:text-foreground"
+                        onClick={() => signOut({ callbackUrl: '/login' })}
+                    >
                         <LogOut />
                         <span>Cerrar sesión</span>
                     </Button>
