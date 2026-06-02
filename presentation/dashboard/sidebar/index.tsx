@@ -18,6 +18,7 @@ import {
     SidebarSeparator,
 } from '@/components/ui/sidebar';
 import { Button } from '@/components/ui/button';
+import { useSessionContext } from '@/contexts/session-context';
 
 const navigationItems = [
     { name: 'Inicio', href: '/dashboard/home', icon: House },
@@ -27,6 +28,36 @@ const navigationItems = [
 
 export function DashboardSidebar() {
     const pathname = usePathname();
+    const { session } = useSessionContext();
+
+    const user = session?.user;
+    
+    // Si el nombre contiene '@', extraemos la parte del nombre de usuario
+    const displayName = user?.name 
+        ? (user.name.includes('@') ? user.name.split('@')[0] : user.name) 
+        : 'Usuario';
+        
+    // Capitalizar el primer caracter del nombre para que se vea bien
+    const formattedName = displayName.charAt(0).toUpperCase() + displayName.slice(1);
+
+    const getInitials = (name: string) => {
+        return name
+            .split(' ')
+            .map((n) => n[0])
+            .slice(0, 2)
+            .join('')
+            .toUpperCase() || 'U';
+    };
+
+    const initials = getInitials(formattedName);
+
+    const getRoleName = (role?: string) => {
+        if (role === 'ADMIN') return 'Administrador';
+        if (role === 'ALBERGUE') return 'Albergue';
+        return 'Adoptante';
+    };
+
+    const roleName = getRoleName(user?.role);
 
     return (
         <Sidebar collapsible="offcanvas" className="border-r border-border bg-background text-foreground">
@@ -79,11 +110,11 @@ export function DashboardSidebar() {
                 <div className="rounded-2xl border border-border bg-surface p-4 shadow-sm">
                     <div className="flex items-center gap-3">
                         <div className="flex size-10 items-center justify-center rounded-full bg-primary-container/20 text-sm font-semibold text-primary">
-                            JD
+                            {initials}
                         </div>
-                        <div className="min-w-0">
-                            <p className="truncate text-sm font-semibold text-foreground">Jane Doe</p>
-                            <p className="truncate text-xs text-muted-foreground">Administradora</p>
+                        <div className="min-w-0 flex-1">
+                            <p className="truncate text-sm font-semibold text-foreground">{formattedName}</p>
+                            <p className="truncate text-xs text-muted-foreground">{roleName}</p>
                         </div>
                     </div>
                     <Button

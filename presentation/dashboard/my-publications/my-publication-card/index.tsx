@@ -57,7 +57,32 @@ export function MyPublicationCard({ pet, onEdit, onDelete }: MyPublicationCardPr
                     </div>
                 </div>
 
-                <div className="flex items-center justify-between text-sm text-muted-foreground">
+                {/* Etiquetas de características */}
+                <div className="flex flex-wrap gap-1.5">
+                    {pet.edad && (
+                        <Badge variant="secondary" className="bg-[#b75037]/10 text-[#b75037] hover:bg-[#b75037]/15 border-0 text-[10px] px-2 py-0.5 font-semibold">
+                            {pet.edad}
+                        </Badge>
+                    )}
+                    {pet.tamano && (
+                        <Badge variant="secondary" className="bg-primary/10 text-primary hover:bg-primary/15 border-0 text-[10px] px-2 py-0.5 font-semibold">
+                            {pet.tamano}
+                        </Badge>
+                    )}
+                    {pet.color && (
+                        <Badge variant="secondary" className="bg-muted text-muted-foreground hover:bg-muted/80 border-0 text-[10px] px-2 py-0.5 font-semibold">
+                            {pet.color}
+                        </Badge>
+                    )}
+                </div>
+
+                {pet.descripcion && (
+                    <p className="text-xs text-muted-foreground line-clamp-2 leading-relaxed">
+                        {pet.descripcion}
+                    </p>
+                )}
+
+                <div className="flex items-center justify-between text-sm text-muted-foreground pt-1 border-t border-border/50">
                     <span>Publicada en AdoptApp</span>
                     <span className="font-medium text-foreground">{pet.estado}</span>
                 </div>

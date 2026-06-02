@@ -16,14 +16,24 @@ import { PetCard } from '../pet-card';
 import { sortOptions } from '@/modules/pets/features/constants';
 import { useGetMascotasQuery } from '@/modules/pets/domain/hooks/usePetQueries';
 
-const defaultSpecies = ['dogs', 'cats'];
+const defaultSpecies = ['dogs', 'cats', 'birds'];
 
 export function CatalogPage() {
-    const { data: petCards = [], isLoading, isError } = useGetMascotasQuery();
-    const [favorites, setFavorites] = useState<Record<number, boolean>>({});
     const [selectedSpecies, setSelectedSpecies] = useState<string[]>(defaultSpecies);
-    const [selectedAge, setSelectedAge] = useState<string | null>('puppy');
+    const [selectedAge, setSelectedAge] = useState<string | null>(null);
     const [selectedSize, setSelectedSize] = useState('all');
+    const [favorites, setFavorites] = useState<Record<number, boolean>>({});
+
+    const queryParams = {
+        page_size: 100,
+        // Si todas las especies están seleccionadas (o ninguna), no mandamos filtro (trae todas)
+        especie: selectedSpecies.length > 0 && selectedSpecies.length < 3 ? selectedSpecies.join(',') : undefined,
+        edad: selectedAge || undefined,
+        tamano: selectedSize !== 'all' ? selectedSize : undefined,
+    };
+
+    const { data: paginatedData, isLoading, isError } = useGetMascotasQuery(queryParams);
+    const petCards = paginatedData?.results || [];
 
     const toggleFavorite = (id: number) => {
         setFavorites((current) => ({ ...current, [id]: !current[id] }));
@@ -37,7 +47,7 @@ export function CatalogPage() {
 
     const resetFilters = () => {
         setSelectedSpecies(defaultSpecies);
-        setSelectedAge('puppy');
+        setSelectedAge(null);
         setSelectedSize('all');
     };
 

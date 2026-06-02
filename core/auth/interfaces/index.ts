@@ -4,6 +4,8 @@ export interface User {
   first_name?: string;
   last_name?: string;
   telefono?: string;
+  tipo_rol?: 'ADMIN' | 'ALBERGUE' | 'USER';
+  datos_adicionales?: Record<string, any>;
 }
 
 export interface RegisterRequest {
@@ -12,6 +14,13 @@ export interface RegisterRequest {
   first_name: string;
   last_name: string;
   telefono: string;
+  tipo_rol?: 'USER' | 'ALBERGUE';
+  datos_adicionales?: {
+    ruc?: string;
+    web?: string;
+    ubicacion?: string;
+    [key: string]: any;
+  };
 }
 
 export interface LoginRequest {

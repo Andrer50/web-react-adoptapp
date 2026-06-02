@@ -17,6 +17,7 @@ import { LoginRequest } from '@/core/auth/interfaces';
 export default function LoginPage() {
   const router = useRouter();
   const [authError, setAuthError] = useState<string | null>(null);
+  const [isLogging, setIsLogging] = useState(false);
   const formik = useFormik<LoginRequest>({
     initialValues: {
       email: '',
@@ -25,10 +26,11 @@ export default function LoginPage() {
     validationSchema: loginSchema,
     onSubmit: async (values, helpers) => {
       setAuthError(null);
+      setIsLogging(true);
 
       const result = await signIn('credentials', {
         redirect: false,
-        email: values.email,
+        username: values.email,
         password: values.password,
       });
 
@@ -36,6 +38,7 @@ export default function LoginPage() {
         setAuthError(result.error);
         toast.error((result as any).error || 'Error al iniciar sesión');
         helpers.setSubmitting(false);
+        setIsLogging(false);
         return;
       }
 
@@ -124,9 +127,11 @@ export default function LoginPage() {
 
             <Button
               type="submit"
-              className="w-full bg-primary hover:bg-primary-hover text-on-primary font-bold py-3.5 px-4 rounded-xl transition-colors focus:ring-4 focus:ring-primary/20 outline-none mt-4 shadow-sm"
+              size="xl"
+              className="w-full mt-4"
+              loading={isLogging}
             >
-              Iniciar sesion
+              {isLogging ? 'Iniciando sesión...' : 'Iniciar sesión'}
             </Button>
           </form>
 

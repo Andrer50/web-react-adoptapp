@@ -9,6 +9,10 @@ const BACKEND_URL = process.env.BACKEND_URL || 'http://localhost:8000';
 interface TokenResponse {
   access: string;
   refresh: string;
+  email?: string;
+  first_name?: string;
+  last_name?: string;
+  tipo_rol?: string;
 }
 
 async function refreshAccessToken(token: JWT): Promise<JWT> {
@@ -47,13 +51,17 @@ const authOptions: NextAuthOptions = {
             return null;
           }
 
+          const fullName = data.first_name && data.last_name 
+            ? `${data.first_name} ${data.last_name}` 
+            : (credentials?.username ?? '');
+
           return {
             id: credentials?.username ?? 'user',
-            email: credentials?.username ?? '',
-            name: credentials?.username ?? '',
+            email: data.email ?? credentials?.username ?? '',
+            name: fullName,
             profilePicture: '',
             phone: '',
-            role: 'USER',
+            role: data.tipo_rol ?? 'USER',
             permissions: [],
             status: 'ACTIVE',
             accessToken: data.access,

@@ -14,6 +14,12 @@ export const registerSchema: yup.ObjectSchema<Partial<RegisterRequest>> = yup.ob
     .string()
     .required('La contraseña es obligatoria')
     .min(8, 'La contraseña debe tener al menos 8 caracteres'),
+  tipo_rol: yup.string().oneOf(['USER', 'ALBERGUE']).optional(),
+  datos_adicionales: yup.object().shape({
+    ruc: yup.string().trim().optional(),
+    ubicacion: yup.string().trim().optional(),
+    web: yup.string().trim().optional(),
+  }).optional(),
 });
 
 export const loginSchema: yup.ObjectSchema<Partial<LoginRequest>> = yup.object().shape({
