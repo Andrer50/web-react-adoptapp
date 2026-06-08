@@ -9,7 +9,7 @@ import { Button } from '@/components/ui/button';
 import { AppInputGroup } from '@/components/ui/InputGroup';
 import { TypographyH1, TypographyLead, TypographyH2, TypographyMuted } from '@/components/ui/typography';
 import { useRouter } from 'next/navigation';
-import { signIn } from 'next-auth/react';
+import { signIn, getSession } from 'next-auth/react';
 import { toast } from 'sonner';
 import { loginSchema } from '@/modules/auth/features/validations';
 import { LoginRequest } from '@/core/auth/interfaces';
@@ -42,8 +42,14 @@ export default function LoginPage() {
         return;
       }
 
+      const session = await getSession();
       toast.success('Sesión iniciada');
-      router.push('/dashboard/home');
+
+      if (session?.user?.role === 'ADMIN') {
+        router.push('/admin');
+      } else {
+        router.push('/dashboard/home');
+      }
     },
   });
 

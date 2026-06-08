@@ -2,7 +2,7 @@
 
 import { useState, useRef } from 'react';
 import { useFormik } from 'formik';
-import * as yup from 'yup';
+import { createPetSchema } from '@/modules/pets/features/validations';
 import { toast } from 'sonner';
 import {
   Plus,
@@ -38,25 +38,6 @@ interface CreatePetFormProps {
   pet?: Mascota;
   onSuccess: () => void;
 }
-
-const createPetSchema = yup.object().shape({
-  nombre: yup.string().trim().required('El nombre es obligatorio'),
-  especie: yup.string().required('La especie es obligatoria'),
-  raza: yup.string().trim().required('La raza es obligatoria'),
-  edad: yup.string().trim().required('La edad es obligatoria'),
-  color: yup.string().trim().required('El color es obligatorio'),
-  tamano: yup.string().required('El tamaño es obligatorio'),
-  descripcion: yup.string().trim().required('La descripción es obligatoria'),
-  fotos: yup
-    .array()
-    .of(
-      yup.object().shape({
-        url_imagen: yup.string().required('La URL es obligatoria'),
-      })
-    )
-    .min(1, 'Debes cargar al menos una imagen'),
-  estado: yup.string().oneOf(['DISPONIBLE', 'ADOPTADO']).optional(),
-});
 
 export function CreatePetForm({ pet, onSuccess }: CreatePetFormProps) {
   const createMascotaMutation = useCreateMascotaMutation();
@@ -349,7 +330,7 @@ export function CreatePetForm({ pet, onSuccess }: CreatePetFormProps) {
           <ImageIcon size={16} className="text-muted-foreground" />
           Imágenes de la Mascota
         </Label>
-        
+
         <input
           type="file"
           ref={fileInputRef}
@@ -444,8 +425,8 @@ export function CreatePetForm({ pet, onSuccess }: CreatePetFormProps) {
           loading={pet ? updateMascotaMutation.isPending : createMascotaMutation.isPending}
           className="w-full h-12 rounded-xl font-bold bg-primary hover:bg-primary-hover text-white shadow-sm transition-all duration-200 active:scale-[0.98]"
         >
-          {pet 
-            ? (updateMascotaMutation.isPending ? 'Guardando...' : 'Guardar Cambios') 
+          {pet
+            ? (updateMascotaMutation.isPending ? 'Guardando...' : 'Guardar Cambios')
             : (createMascotaMutation.isPending ? 'Publicando...' : 'Publicar Mascota')
           }
         </Button>

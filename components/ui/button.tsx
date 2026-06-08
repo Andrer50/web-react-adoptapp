@@ -23,6 +23,7 @@ const buttonVariants = cva(
       size: {
         default:
           "h-9 gap-1.5 px-3.5 rounded-lg",
+        md: "h-9 gap-1.5 px-3.5 rounded-lg",
         xs: "h-6 gap-1 rounded-md px-2 text-xs [&_svg:not([class*='size-'])]:size-3",
         sm: "h-8 gap-1 rounded-md px-3 text-[0.8rem] [&_svg:not([class*='size-'])]:size-3.5",
         lg: "h-10 gap-1.5 px-4 rounded-lg",

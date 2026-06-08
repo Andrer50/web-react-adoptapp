@@ -24,3 +24,7 @@ export const updateMascotaAction = async (request: UpdateMascotaRequest): Promis
   return apiClient.put<Mascota, Partial<CreateMascotaRequest> & { estado?: 'DISPONIBLE' | 'ADOPTADO' }>(`mascotas/${id}/`, data);
 };
 
+export const deleteMascotaAction = async (id: number): Promise<void> => {
+  return apiClient.delete<void>(`mascotas/${id}/`);
+};
+

@@ -1,0 +1,28 @@
+export interface Usuario {
+  id: number;
+  username: string;
+  email: string;
+  first_name?: string;
+  last_name?: string;
+  tipo_rol: 'ADMIN' | 'ALBERGUE' | 'USER';
+  telefono?: string;
+  is_active: boolean;
+  date_joined?: string;
+}
+
+export interface UpdateUsuarioRequest {
+  id: number;
+  email?: string;
+  first_name?: string;
+  last_name?: string;
+  tipo_rol?: 'ADMIN' | 'ALBERGUE' | 'USER';
+  telefono?: string;
+  is_active?: boolean;
+}
+
+export interface GetUsuariosParams {
+  page?: number;
+  page_size?: number;
+  search?: string;
+  tipo_rol?: string;
+}

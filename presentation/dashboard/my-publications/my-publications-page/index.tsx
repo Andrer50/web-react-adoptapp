@@ -11,6 +11,8 @@ import {
   Trash2,
   SlidersHorizontal,
   AlertCircle,
+  HeartHandshake,
+  Award,
 } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
@@ -44,11 +46,16 @@ import { useGetMascotasQuery } from '@/modules/pets/domain/hooks/usePetQueries';
 import { toast } from 'sonner';
 import { Mascota } from '@/core/pets/interfaces';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { useGetAdopcionesQuery } from '@/modules/adoptions/domain/hooks/useAdoptionQueries';
+import { MarkAdoptedDialog } from './components/mark-adopted-dialog';
+import { downloadAdoptionCertificate } from './utils/certificate';
 
 export function MyPublicationsPage() {
   const [isOpen, setIsOpen] = useState(false);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [selectedPet, setSelectedPet] = useState<Mascota | null>(null);
+  const [isAdoptedDialogOpen, setIsAdoptedDialogOpen] = useState(false);
+  const [selectedPetForAdoption, setSelectedPetForAdoption] = useState<Mascota | null>(null);
 
   // Estados de paginación y filtros
   const [page, setPage] = useState(1);
@@ -81,6 +88,7 @@ export function MyPublicationsPage() {
   };
 
   const { data, isLoading, isError, refetch } = useGetMascotasQuery(queryParams);
+  const { data: adoptions = [] } = useGetAdopcionesQuery();
 
   const myPets = data?.results || [];
   const totalItems = data?.count || 0;
@@ -100,6 +108,15 @@ export function MyPublicationsPage() {
   const handleEdit = (pet: Mascota) => {
     setSelectedPet(pet);
     setIsEditDialogOpen(true);
+  };
+
+  const handleDownloadCertificate = (pet: Mascota) => {
+    const adoption = adoptions.find((a) => a.mascota === pet.id || a.mascota_detalle?.id === pet.id);
+    if (!adoption) {
+      toast.error('No se encontró el registro de adopción para esta mascota.');
+      return;
+    }
+    downloadAdoptionCertificate(pet, adoption);
   };
 
   const handleDelete = (nombre: string) => {
@@ -153,10 +170,11 @@ export function MyPublicationsPage() {
               <div className="relative">
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground h-4 w-4" />
                 <Input
+                  size="xl"
                   placeholder="Buscar por nombre..."
                   value={inputValue}
                   onChange={(e) => setInputValue(e.target.value)}
-                  className="pl-9 h-11 w-full bg-background border-border rounded-xl focus-visible:ring-primary shadow-none"
+                  className="pl-9 w-full bg-background border-border focus-visible:ring-primary shadow-none"
                 />
               </div>
 
@@ -168,7 +186,7 @@ export function MyPublicationsPage() {
                   setPage(1);
                 }}
               >
-                <SelectTrigger className="h-11 w-full rounded-xl border-border bg-background focus:ring-primary text-sm flex items-center justify-between overflow-hidden">
+                <SelectTrigger size="xl" className="w-full border-border bg-background focus:ring-primary">
                   <span className="truncate pr-2 block text-left">
                     {filterSpecies === 'all'
                       ? 'Todas las especies'
@@ -198,7 +216,7 @@ export function MyPublicationsPage() {
                   setPage(1);
                 }}
               >
-                <SelectTrigger className="h-11 w-full rounded-xl border-border bg-background focus:ring-primary text-sm flex items-center justify-between overflow-hidden">
+                <SelectTrigger size="xl" className="w-full border-border bg-background focus:ring-primary">
                   <span className="truncate pr-2 block text-left">
                     {filterSize === 'all' ? 'Todos los tamaños' : filterSize}
                   </span>
@@ -219,7 +237,7 @@ export function MyPublicationsPage() {
                   setPage(1);
                 }}
               >
-                <SelectTrigger className="h-11 w-full rounded-xl border-border bg-background focus:ring-primary text-sm flex items-center justify-between overflow-hidden">
+                <SelectTrigger size="xl" className="w-full border-border bg-background focus:ring-primary">
                   <span className="truncate pr-2 block text-left">
                     {filterStatus === 'all' ? 'Todos los estados' : filterStatus === 'DISPONIBLE' ? 'Disponible' : 'Adoptado'}
                   </span>
@@ -235,8 +253,9 @@ export function MyPublicationsPage() {
               <Button
                 type="button"
                 variant="outline"
+                size="xl"
                 onClick={handleResetFilters}
-                className="h-11 w-full rounded-xl border-border text-foreground hover:bg-surface-container font-semibold gap-2 active:scale-95"
+                className="w-full border-border text-foreground hover:bg-surface-container font-semibold gap-2 active:scale-95"
               >
                 <RotateCcw size={16} />
                 Restablecer
@@ -357,23 +376,67 @@ export function MyPublicationsPage() {
                         </TableCell>
                         <TableCell className="text-right pr-6 py-3.5">
                           <div className="inline-flex gap-2 justify-end">
+                            {/* Descargar Certificado de Adopción (solo si está adoptada) */}
+                            {pet.estado === 'ADOPTADO' && (
+                              <Button
+                                type="button"
+                                size="icon-sm"
+                                variant="ghost"
+                                onClick={() => handleDownloadCertificate(pet)}
+                                className="h-8 w-8 rounded-full bg-background hover:bg-orange-50 text-orange-600 border border-border shadow-sm active:scale-90"
+                                title="Descargar Certificado de Adopción"
+                              >
+                                <Award size={14} />
+                              </Button>
+                            )}
+
+                            {/* Marcar como Adoptado (solo si está disponible) */}
+                            {pet.estado === 'DISPONIBLE' && (
+                              <Button
+                                type="button"
+                                size="icon-sm"
+                                variant="ghost"
+                                onClick={() => {
+                                  setSelectedPetForAdoption(pet);
+                                  setIsAdoptedDialogOpen(true);
+                                }}
+                                className="h-8 w-8 rounded-full bg-background hover:bg-green-50 text-green-600 border border-border shadow-sm active:scale-90"
+                                title="Marcar como Adoptado"
+                              >
+                                <HeartHandshake size={14} />
+                              </Button>
+                            )}
+
+                            {/* Editar */}
                             <Button
                               type="button"
                               size="icon-sm"
                               variant="ghost"
+                              disabled={pet.estado === 'ADOPTADO'}
                               onClick={() => handleEdit(pet)}
-                              className="h-8 w-8 rounded-full bg-background hover:bg-muted text-foreground border border-border shadow-sm active:scale-90"
-                              title="Editar"
+                              className={`h-8 w-8 rounded-full bg-background border border-border shadow-sm active:scale-90 ${
+                                pet.estado === 'ADOPTADO'
+                                  ? 'text-muted-foreground/50 hover:bg-background cursor-not-allowed opacity-50'
+                                  : 'hover:bg-muted text-foreground'
+                              }`}
+                              title={pet.estado === 'ADOPTADO' ? 'Mascota adoptada - No editable' : 'Editar'}
                             >
                               <Edit3 size={14} />
                             </Button>
+
+                            {/* Eliminar */}
                             <Button
                               type="button"
                               size="icon-sm"
                               variant="ghost"
+                              disabled={pet.estado === 'ADOPTADO'}
                               onClick={() => handleDelete(pet.nombre)}
-                              className="h-8 w-8 rounded-full bg-background hover:bg-red-50 text-red-500 border border-border shadow-sm active:scale-90"
-                              title="Eliminar"
+                              className={`h-8 w-8 rounded-full bg-background border border-border shadow-sm active:scale-90 ${
+                                pet.estado === 'ADOPTADO'
+                                  ? 'text-muted-foreground/50 hover:bg-background cursor-not-allowed opacity-50'
+                                  : 'hover:bg-red-50 text-red-500'
+                              }`}
+                              title={pet.estado === 'ADOPTADO' ? 'Mascota adoptada - No se puede eliminar' : 'Eliminar'}
                             >
                               <Trash2 size={14} />
                             </Button>
@@ -465,6 +528,13 @@ export function MyPublicationsPage() {
           </div>
         </DialogContent>
       </Dialog>
+      {/* Modal de Confirmación de Adopción */}
+      <MarkAdoptedDialog
+        open={isAdoptedDialogOpen}
+        onOpenChange={setIsAdoptedDialogOpen}
+        pet={selectedPetForAdoption}
+        onSuccess={refetch}
+      />
     </div>
   );
 }
