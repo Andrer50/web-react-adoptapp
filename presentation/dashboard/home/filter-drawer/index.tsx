@@ -139,16 +139,18 @@ export function FiltersDrawer({
         </div>
 
         <SheetFooter className="border-t border-border px-6 py-4 sm:justify-start">
-          <SheetClose>
-            <Button
-              type="button"
-              variant="outline"
-              className="w-full h-12 rounded-xl border-border text-foreground hover:bg-surface-container font-semibold"
-              onClick={onResetFilters}
-            >
-              Restablecer y aplicar
-            </Button>
-          </SheetClose>
+          <SheetClose
+            render={
+              <Button
+                type="button"
+                variant="outline"
+                className="w-full h-12 rounded-xl border-border text-foreground hover:bg-surface-container font-semibold"
+                onClick={onResetFilters}
+              >
+                Restablecer y aplicar
+              </Button>
+            }
+          />
         </SheetFooter>
       </SheetContent>
     </Sheet>

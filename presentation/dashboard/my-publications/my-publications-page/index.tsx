@@ -137,12 +137,14 @@ export function MyPublicationsPage() {
             </div>
 
             <Sheet open={isOpen} onOpenChange={setIsOpen}>
-              <SheetTrigger>
-                <Button className="h-12 rounded-xl px-6 font-semibold shadow-sm w-full sm:w-auto bg-primary text-primary-foreground hover:bg-primary-hover">
-                  <Plus className="mr-2" size={20} />
-                  Nueva Publicación
-                </Button>
-              </SheetTrigger>
+              <SheetTrigger
+                render={
+                  <Button className="h-12 rounded-xl px-6 font-semibold shadow-sm w-full sm:w-auto bg-primary text-primary-foreground hover:bg-primary-hover">
+                    <Plus className="mr-2" size={20} />
+                    Nueva Publicación
+                  </Button>
+                }
+              />
               <SheetContent className="w-full sm:max-w-lg overflow-y-auto bg-surface border-l border-border p-0">
                 <SheetHeader className="border-b border-border px-6 py-6 bg-background sticky top-0 z-10">
                   <SheetTitle className="scroll-m-20 text-2xl font-semibold tracking-tight text-foreground">
