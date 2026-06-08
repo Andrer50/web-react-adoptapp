@@ -18,7 +18,7 @@ export async function proxy(request: NextRequest) {
   // Si intenta acceder a rutas de administración y no es ADMIN, redirige a /dashboard/home
   if (pathname.startsWith('/admin')) {
     if (token.role !== 'ADMIN') {
-      return NextResponse.redirect(new URL('/dashboard/home', request.url));
+      return NextResponse.redirect(new URL('/', request.url));
     }
   }
 

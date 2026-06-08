@@ -1,11 +1,33 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
+import { useSession, signOut } from "next-auth/react";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { PawIcon, SearchIcon } from "./Icons";
 import Link from "next/link";
 
 export const Header: React.FC = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
+  const { data: session, status } = useSession();
+
+  const isAuthenticated = status === "authenticated";
+  const user = session?.user;
+
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setIsDropdownOpen(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
+
+  const initial = user?.name ? user.name.charAt(0).toUpperCase() : "U";
 
   return (
     <header className="sticky top-0 z-50 w-full border-b border-outline-variant/10 bg-surface/80 backdrop-blur-md transition-all duration-300">
@@ -59,12 +81,48 @@ export const Header: React.FC = () => {
           >
             <SearchIcon size={20} />
           </button>
-          <Link
-            href="/login"
-            className="inline-flex h-11 items-center justify-center rounded-full bg-primary px-6 font-sans text-sm font-bold text-white shadow-lg shadow-primary/20 transition-all duration-300 hover:bg-primary-hover hover:shadow-primary-hover/30 hover:-translate-y-0.5 active:translate-y-0"
-          >
-            Iniciar Sesion
-          </Link>
+          {isAuthenticated ? (
+            <div className="relative" ref={dropdownRef}>
+              <button
+                onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+                className="flex items-center gap-2 rounded-full border border-outline-variant/30 p-1.5 pr-4 hover:bg-surface-container-low transition-all duration-200 cursor-pointer shadow-sm bg-surface"
+              >
+                <Avatar size="sm" className="bg-primary/10 text-primary font-bold">
+                  <AvatarFallback>{initial}</AvatarFallback>
+                </Avatar>
+                <span className="text-sm font-bold text-on-surface select-none">
+                  {user?.name?.split(' ')[0]}
+                </span>
+              </button>
+              {isDropdownOpen && (
+                <div className="absolute right-0 mt-2 w-48 origin-top-right rounded-2xl border border-border bg-surface p-2 shadow-lg ring-1 ring-foreground/5 z-50">
+                  <Link
+                    href={user?.role === 'ADMIN' ? '/admin' : '/dashboard/home'}
+                    className="flex w-full items-center rounded-xl px-3.5 py-2.5 text-sm text-foreground hover:bg-surface-container font-semibold transition-colors"
+                    onClick={() => setIsDropdownOpen(false)}
+                  >
+                    {user?.role === 'ADMIN' ? 'Panel Admin' : 'Mi Panel'}
+                  </Link>
+                  <button
+                    onClick={() => {
+                      setIsDropdownOpen(false);
+                      signOut({ callbackUrl: '/' });
+                    }}
+                    className="flex w-full items-center rounded-xl px-3.5 py-2.5 text-sm text-destructive hover:bg-red-50 dark:hover:bg-red-950/20 font-bold transition-colors cursor-pointer"
+                  >
+                    Cerrar Sesión
+                  </button>
+                </div>
+              )}
+            </div>
+          ) : (
+            <Link
+              href="/login"
+              className="inline-flex h-11 items-center justify-center rounded-full bg-primary px-6 font-sans text-sm font-bold text-white shadow-lg shadow-primary/20 transition-all duration-300 hover:bg-primary-hover hover:shadow-primary-hover/30 hover:-translate-y-0.5 active:translate-y-0"
+            >
+              Iniciar Sesion
+            </Link>
+          )}
         </div>
 
         {/* Menu movil / Acciones */}
@@ -134,14 +192,39 @@ export const Header: React.FC = () => {
           >
             Panel Admin
           </a>
-          <div className="mt-4 border-t border-outline-variant/10 pt-4">
-            <a
-              href="#"
-              className="flex w-full h-11 items-center justify-center rounded-full bg-primary font-sans text-sm font-bold text-white shadow-lg shadow-primary/20 transition-all hover:bg-primary-hover"
-            >
-              Iniciar Sesion
-            </a>
-          </div>
+          {isAuthenticated ? (
+            <div className="space-y-2 pt-3 border-t border-outline-variant/10 mt-4">
+              <div className="px-3 py-1 text-xs font-bold uppercase tracking-wider text-muted-foreground">
+                Sesión: {user?.name}
+              </div>
+              <Link
+                href={user?.role === 'ADMIN' ? '/admin' : '/dashboard/home'}
+                className="block rounded-lg px-3 py-2 text-base font-semibold text-on-surface-variant hover:bg-primary/5 hover:text-primary transition-all"
+                onClick={() => setIsMobileMenuOpen(false)}
+              >
+                {user?.role === 'ADMIN' ? 'Panel Admin' : 'Mi Panel'}
+              </Link>
+              <button
+                onClick={() => {
+                  setIsMobileMenuOpen(false);
+                  signOut({ callbackUrl: '/' });
+                }}
+                className="flex w-full items-center justify-center h-11 rounded-full border border-destructive text-destructive font-sans text-sm font-bold hover:bg-red-50 dark:hover:bg-red-950/20 transition-all cursor-pointer"
+              >
+                Cerrar Sesión
+              </button>
+            </div>
+          ) : (
+            <div className="mt-4 border-t border-outline-variant/10 pt-4">
+              <Link
+                href="/login"
+                onClick={() => setIsMobileMenuOpen(false)}
+                className="flex w-full h-11 items-center justify-center rounded-full bg-primary font-sans text-sm font-bold text-white shadow-lg shadow-primary/20 transition-all hover:bg-primary-hover"
+              >
+                Iniciar Sesion
+              </Link>
+            </div>
+          )}
         </div>
       </div>
     </header>
