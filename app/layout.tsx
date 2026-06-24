@@ -1,22 +1,7 @@
 import type { Metadata } from "next";
-import { Quicksand, Nunito_Sans, Geist } from "next/font/google";
 import "./globals.css";
 import { cn } from "@/lib/utils";
 import { Providers } from "./providers";
-
-const geist = Geist({ subsets: ['latin'], variable: '--font-sans' });
-
-const quicksand = Quicksand({
-  variable: "--font-quicksand",
-  subsets: ["latin"],
-  weight: ["500", "600", "700"],
-});
-
-const nunitoSans = Nunito_Sans({
-  variable: "--font-nunito-sans",
-  subsets: ["latin"],
-  weight: ["300", "400", "600", "700", "800"],
-});
 
 export const metadata: Metadata = {
   title: "AdoptApp - Encuentra a tu compañero perfecto",
@@ -31,7 +16,7 @@ export default function RootLayout({
   return (
     <html
       lang="es"
-      className={cn("h-full", "antialiased", quicksand.variable, nunitoSans.variable, "font-sans", geist.variable)}
+      className="h-full antialiased font-sans"
     >
       <body className="min-h-full flex flex-col bg-background text-on-background">
         <Providers>{children}</Providers>

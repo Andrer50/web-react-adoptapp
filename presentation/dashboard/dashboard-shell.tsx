@@ -17,7 +17,7 @@ export function DashboardShell({ children }: DashboardShellProps) {
           <SidebarTrigger />
           <div className="min-w-0">
             <p className="text-xs font-semibold uppercase tracking-[0.24em] text-muted-foreground">
-              Dashboard
+              Centro de Adopción
             </p>
             <h1 className="truncate text-base font-semibold text-foreground">AdoptApp</h1>
           </div>

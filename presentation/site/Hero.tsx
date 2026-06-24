@@ -11,7 +11,7 @@ export const Hero: React.FC = () => {
 
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 items-center gap-12 lg:grid-cols-2 lg:gap-16">
-          
+
           {/* Columna de texto izquierda */}
           <div className="flex flex-col items-center text-center lg:items-start lg:text-left">
             <h1 className="font-display text-4xl font-bold tracking-tight text-on-surface sm:text-5xl lg:text-6xl/tight">
@@ -20,7 +20,7 @@ export const Hero: React.FC = () => {
                 compañero perfecto
               </span>
             </h1>
-            <p className="mt-6 max-w-lg font-sans text-lg leading-relaxed text-on-surface-variant">
+            <p className="mt-6 max-w-lg text-lg leading-relaxed ">
               Conectamos corazones dispuestos a dar amor con animales que buscan
               un hogar. Nuestra misión es fomentar la adopción responsable y crear
               lazos inquebrantables.
@@ -47,7 +47,7 @@ export const Hero: React.FC = () => {
 
           {/* Columna de imagen derecha */}
           <div className="relative flex justify-center lg:justify-end">
-            
+
             {/* Forma de fondo detras de la imagen */}
             <div className="absolute inset-0 -m-8 scale-95 rounded-[50px] bg-gradient-to-tr from-secondary-container/20 to-primary-container/20 blur-xl -z-10" />
 
@@ -77,7 +77,7 @@ export const Hero: React.FC = () => {
               </div>
             </div>
           </div>
-          
+
         </div>
       </div>
     </section>

@@ -5,12 +5,21 @@ import Link from 'next/link';
 import { RegisterForm } from '@/presentation/auth/register-form';
 import { TypographyH1, TypographyLead, TypographyH2, TypographyMuted } from '@/components/ui/typography';
 import { useRouter } from 'next/navigation';
+import { Button } from '@/components/ui/button';
+import { ArrowLeft } from 'lucide-react';
 
 export default function RegisterPage() {
   const router = useRouter();
 
   return (
-    <div className="min-h-screen w-full flex bg-background">
+    <div className="min-h-screen w-full flex bg-background relative">
+      {/* Botón para volver al inicio */}
+      <div className="absolute top-4 right-4 sm:top-6 sm:right-6 z-50">
+        <Button variant="link" size="sm" as={Link} href="/" className="rounded-xl gap-2 font-semibold">
+          <ArrowLeft className="h-4 w-4" />
+          Volver al inicio
+        </Button>
+      </div>
       {/* Columna izquierda - Imagen */}
       <div className="hidden lg:flex lg:w-1/2 relative flex-col justify-end p-12 overflow-hidden">
         <Image

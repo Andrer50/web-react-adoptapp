@@ -1,8 +1,9 @@
-@import "tailwindcss";
-@import "tw-animate-css";
-@import "shadcn/tailwind.css";
+@import url('https://use.typekit.net/kdh1jtb.css');
+@import 'tailwindcss';
+@import 'tw-animate-css';
+@import 'shadcn/tailwind.css';
 
-@custom-variant dark (&:is(.dark *)); 
+@custom-variant dark (&:is(.dark *));
 
 @theme {
   --color-primary: #9f402d;
@@ -43,8 +44,8 @@
   --color-surface-container-high: #eae7e7;
   --color-surface-container-highest: #e4e2e1;
 
-  --font-display: var(--font-quicksand), sans-serif;
-  --font-sans: var(--font-nunito-sans), sans-serif;
+  --font-display: inter-18pt, sans-serif;
+  --font-sans: inter-18pt, sans-serif;
 
   --radius-sm: 0.25rem;
   --radius-default: 0.5rem;
@@ -56,10 +57,13 @@
   --radius-full: 9999px;
 }
 
+html, body {
+  font-family: inter-18pt, sans-serif;
+}
+
 body {
   background-color: var(--color-background);
   color: var(--color-on-background);
-  font-family: var(--font-sans);
   overflow-x: hidden;
 }
 
@@ -79,8 +83,8 @@ body {
 }
 
 @theme inline {
-  --font-heading: var(--font-sans);
-  --font-sans: var(--font-sans);
+  --font-heading: inter-18pt, sans-serif;
+  --font-sans: inter-18pt, sans-serif;
   --color-sidebar-ring: var(--sidebar-ring);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);

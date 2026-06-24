@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { Mail, Lock } from 'lucide-react';
+import { Mail, Lock, ArrowLeft } from 'lucide-react';
 import { useFormik } from 'formik';
 import { Button } from '@/components/ui/button';
 import { AppInputGroup } from '@/components/ui/InputGroup';
@@ -36,7 +36,7 @@ export default function LoginPage() {
 
       if (result?.error) {
         setAuthError(result.error);
-        toast.error((result as any).error || 'Error al iniciar sesión');
+        toast.error(result.error || 'Error al iniciar sesión');
         helpers.setSubmitting(false);
         setIsLogging(false);
         return;
@@ -54,7 +54,15 @@ export default function LoginPage() {
   });
 
   return (
-    <div className="min-h-screen w-full flex bg-background">
+    <div className="min-h-screen w-full flex bg-background relative">
+      {/* Botón para volver al inicio */}
+      <div className="absolute top-4 right-4 sm:top-6 sm:right-6 z-50">
+        <Button variant="link" size="sm" as={Link} href="/" className="rounded-xl gap-2 font-semibold">
+          <ArrowLeft className="h-4 w-4" />
+          Volver al inicio
+        </Button>
+      </div>
+
       {/* Columna izquierda - Imagen (oculta en movil, visible en pantallas lg) */}
       <div className="hidden lg:flex lg:w-1/2 relative flex-col justify-end p-12 overflow-hidden">
         <Image
