@@ -3,6 +3,7 @@
 import { HeartHandshake, PawPrint } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { TypographyH1, TypographyLead } from '@/components/ui/typography';
+import Link from 'next/link';
 
 export function MyAdoptionsPage() {
     return (
@@ -24,7 +25,7 @@ export function MyAdoptionsPage() {
                         <p className="max-w-sm text-muted-foreground">
                             Cuando tengas adopciones activas, podrás ver aquí el seguimiento y los detalles.
                         </p>
-                        <Button className="mt-6 h-11 rounded-xl bg-primary px-5 font-semibold text-primary-foreground hover:bg-primary-hover">
+                        <Button as={Link} href="/dashboard/home" className="mt-6 h-11 rounded-xl bg-primary px-5 font-semibold text-primary-foreground hover:bg-primary-hover">
                             <PawPrint className="mr-2" size={18} />
                             Explorar catálogo
                         </Button>
