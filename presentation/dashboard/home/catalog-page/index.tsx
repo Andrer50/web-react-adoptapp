@@ -1,19 +1,10 @@
 'use client';
 
 import { useState } from 'react';
-import { ArrowDownWideNarrow } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
-} from '@/components/ui/select';
 import { TypographyH1, TypographyLead, TypographySmall } from '@/components/ui/typography';
 import { FiltersDrawer } from '../filter-drawer';
 import { PetCard } from '../pet-card';
-import { sortOptions } from '@/modules/pets/features/constants';
 import { useGetMascotasQuery } from '@/modules/pets/domain/hooks/usePetQueries';
 
 const defaultSpecies = ['dogs', 'cats', 'birds'];
@@ -74,22 +65,6 @@ export function CatalogPage() {
                                 onSelectAge={setSelectedAge}
                                 onSelectSize={setSelectedSize}
                             />
-
-                            <Select defaultValue="newest">
-                                <SelectTrigger className="flex h-12 w-full max-w-[240px] items-center justify-between rounded-xl border border-border bg-surface px-4 text-sm font-medium text-foreground shadow-sm focus:ring-primary">
-                                    <div className="flex items-center gap-2">
-                                        <ArrowDownWideNarrow size={16} className="text-primary" />
-                                        Ordenar por: <span className="font-semibold"><SelectValue placeholder="Ordenar" /></span>
-                                    </div>
-                                </SelectTrigger>
-                                <SelectContent className="rounded-xl border-border">
-                                    {sortOptions.map((option) => (
-                                        <SelectItem key={option.id} value={option.id} className="rounded-md focus:bg-primary/10">
-                                            {option.label}
-                                        </SelectItem>
-                                    ))}
-                                </SelectContent>
-                            </Select>
                         </div>
                     </div>
 

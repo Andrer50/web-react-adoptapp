@@ -8,6 +8,7 @@ export interface Usuario {
   telefono?: string;
   is_active: boolean;
   date_joined?: string;
+  datos_adicionales?: Record<string, unknown>;
 }
 
 export interface UpdateUsuarioRequest {
@@ -18,6 +19,7 @@ export interface UpdateUsuarioRequest {
   tipo_rol?: 'ADMIN' | 'ALBERGUE' | 'USER';
   telefono?: string;
   is_active?: boolean;
+  datos_adicionales?: Record<string, unknown>;
 }
 
 export interface GetUsuariosParams {

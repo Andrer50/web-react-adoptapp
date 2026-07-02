@@ -125,7 +125,9 @@ export function FiltersDrawer({
               }}
             >
               <SelectTrigger className="h-12 w-full rounded-xl border-border bg-surface text-foreground focus:ring-primary shadow-sm">
-                <SelectValue placeholder="Seleccionar tamaño" />
+                <span className="truncate text-left flex-1">
+                  {sizeFilters.find((s) => s.id === selectedSize)?.label || 'Seleccionar tamaño'}
+                </span>
               </SelectTrigger>
               <SelectContent className="rounded-xl border-border">
                 {sizeFilters.map((size) => (

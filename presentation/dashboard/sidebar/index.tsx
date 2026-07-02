@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Dog, Heart, House, LogOut, PawPrint } from 'lucide-react';
+import { Dog, Heart, House, LogOut, PawPrint, User } from 'lucide-react';
 import { signOut } from 'next-auth/react';
 import {
     Sidebar,
@@ -19,11 +19,13 @@ import {
 } from '@/components/ui/sidebar';
 import { Button } from '@/components/ui/button';
 import { useSessionContext } from '@/contexts/session-context';
+import { useBuscarUsuarioPorEmailQuery } from '@/modules/users/domain/hooks/useUserQueries';
 
 const navigationItems = [
     { name: 'Inicio', href: '/dashboard/home', icon: House },
     { name: 'Mis publicaciones', href: '/dashboard/my-publications', icon: PawPrint },
     { name: 'Mis adopciones', href: '/dashboard/my-adoptions', icon: Heart },
+    { name: 'Mi perfil', href: '/dashboard/profile', icon: User },
 ];
 
 export function DashboardSidebar() {
@@ -31,12 +33,17 @@ export function DashboardSidebar() {
     const { session } = useSessionContext();
 
     const user = session?.user;
-    
+
+    const email = user?.email || '';
+    const { data: userData } = useBuscarUsuarioPorEmailQuery(email, !!email);
+
     // Si el nombre contiene '@', extraemos la parte del nombre de usuario
-    const displayName = user?.name 
-        ? (user.name.includes('@') ? user.name.split('@')[0] : user.name) 
-        : 'Usuario';
-        
+    const displayName = userData
+        ? `${userData.first_name || ''} ${userData.last_name || ''}`.trim() || userData.username
+        : user?.name
+            ? (user.name.includes('@') ? user.name.split('@')[0] : user.name)
+            : 'Usuario';
+
     // Capitalizar el primer caracter del nombre para que se vea bien
     const formattedName = displayName.charAt(0).toUpperCase() + displayName.slice(1);
 
@@ -51,13 +58,15 @@ export function DashboardSidebar() {
 
     const initials = getInitials(formattedName);
 
+    const fotoPerfil = (userData?.datos_adicionales?.foto_perfil as string) || '';
+
     const getRoleName = (role?: string) => {
         if (role === 'ADMIN') return 'Administrador';
         if (role === 'ALBERGUE') return 'Albergue';
         return 'Adoptante';
     };
 
-    const roleName = getRoleName(user?.role);
+    const roleName = getRoleName(userData?.tipo_rol || user?.role);
 
     return (
         <Sidebar collapsible="offcanvas" className="border-r border-border bg-background text-foreground">
@@ -109,8 +118,16 @@ export function DashboardSidebar() {
             <SidebarFooter className="p-4">
                 <div className="rounded-2xl border border-border bg-surface p-4 shadow-sm">
                     <div className="flex items-center gap-3">
-                        <div className="flex size-10 items-center justify-center rounded-full bg-primary-container/20 text-sm font-semibold text-primary">
-                            {initials}
+                        <div className="relative flex size-10 items-center justify-center rounded-full bg-primary-container/20 text-sm font-semibold text-primary overflow-hidden">
+                            {fotoPerfil ? (
+                                <img
+                                    src={fotoPerfil}
+                                    alt="Foto de perfil"
+                                    className="h-full w-full object-cover"
+                                />
+                            ) : (
+                                initials
+                            )}
                         </div>
                         <div className="min-w-0 flex-1">
                             <p className="truncate text-sm font-semibold text-foreground">{formattedName}</p>

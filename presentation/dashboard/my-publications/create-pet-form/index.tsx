@@ -34,6 +34,48 @@ import {
   useUpdateMascotaMutation,
 } from '@/modules/pets/domain/hooks/usePetMutations';
 
+const calculateAgeString = (birthDate: Date): string => {
+  const today = new Date();
+  let years = today.getFullYear() - birthDate.getFullYear();
+  let months = today.getMonth() - birthDate.getMonth();
+
+  if (months < 0 || (months === 0 && today.getDate() < birthDate.getDate())) {
+    years--;
+    months += 12;
+  }
+
+  if (years > 0) {
+    if (years >= 8) {
+      return `${years} años (Mayor)`;
+    }
+    return years === 1 ? '1 año' : `${years} años`;
+  }
+
+  if (months === 0) {
+    return 'Menos de 1 mes';
+  }
+
+  return months === 1 ? '1 mes' : `${months} meses`;
+};
+
+const parseAgeStringToDate = (ageStr: string): Date => {
+  const today = new Date();
+  if (!ageStr) return today;
+
+  const numMatch = ageStr.match(/(\d+)\s*(mes|año)/i);
+  if (numMatch) {
+    const value = parseInt(numMatch[1], 10);
+    const type = numMatch[2].toLowerCase();
+
+    if (type.includes('mes')) {
+      today.setMonth(today.getMonth() - value);
+    } else if (type.includes('año')) {
+      today.setFullYear(today.getFullYear() - value);
+    }
+  }
+  return today;
+};
+
 interface CreatePetFormProps {
   pet?: Mascota;
   onSuccess: () => void;
@@ -52,6 +94,7 @@ export function CreatePetForm({ pet, onSuccess }: CreatePetFormProps) {
       especie: pet?.especie || '',
       raza: pet?.raza || '',
       edad: pet?.edad || '',
+      fechaNacimiento: pet?.edad ? parseAgeStringToDate(pet.edad).toISOString().split('T')[0] : '',
       color: pet?.color || '',
       tamano: pet?.tamano || '',
       descripcion: pet?.descripcion || '',
@@ -99,6 +142,17 @@ export function CreatePetForm({ pet, onSuccess }: CreatePetFormProps) {
       }
     },
   });
+
+  const handleFechaChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const dateVal = e.target.value;
+    formik.setFieldValue('fechaNacimiento', dateVal);
+    if (dateVal) {
+      const computedAge = calculateAgeString(new Date(dateVal + 'T00:00:00'));
+      formik.setFieldValue('edad', computedAge);
+    } else {
+      formik.setFieldValue('edad', '');
+    }
+  };
 
   const handleFileChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const files = event.target.files;
@@ -213,16 +267,23 @@ export function CreatePetForm({ pet, onSuccess }: CreatePetFormProps) {
 
         <div className="space-y-1">
           <AppInputGroup
-            label="Edad"
+            label="Fecha de nacimiento"
             icon={<Clock size={16} className="text-muted-foreground" />}
             inputProps={{
-              id: 'edad',
-              name: 'edad',
-              placeholder: 'Ej. 2 meses, 1 año',
-              value: formik.values.edad,
-              onChange: formik.handleChange,
+              id: 'fechaNacimiento',
+              name: 'fechaNacimiento',
+              type: 'date',
+              value: formik.values.fechaNacimiento,
+              onChange: handleFechaChange,
+              max: new Date().toISOString().split('T')[0],
             }}
           />
+          {formik.values.edad && (
+            <p className="text-xs text-muted-foreground mt-1.5 font-medium flex items-center gap-1">
+              <Sparkles size={12} className="text-primary animate-pulse" />
+              Edad calculada: <span className="font-semibold text-foreground">{formik.values.edad}</span>
+            </p>
+          )}
           {formik.touched.edad && formik.errors.edad && (
             <span className="text-xs text-red-500 font-medium flex items-center gap-1 mt-1">
               <AlertCircle size={12} />
@@ -232,8 +293,8 @@ export function CreatePetForm({ pet, onSuccess }: CreatePetFormProps) {
         </div>
       </div>
 
-      {/* Fila 3: Color, Tamaño y Estado (si aplica) */}
-      <div className={`grid grid-cols-1 gap-4 ${pet ? 'sm:grid-cols-3' : 'sm:grid-cols-2'}`}>
+      {/* Fila 3: Color y Tamaño */}
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <div className="space-y-1">
           <AppInputGroup
             label="Color"
@@ -276,30 +337,6 @@ export function CreatePetForm({ pet, onSuccess }: CreatePetFormProps) {
             </span>
           )}
         </div>
-
-        {pet && (
-          <div className="space-y-2">
-            <Label className="text-sm font-semibold text-foreground">Estado</Label>
-            <Select
-              onValueChange={(value) => formik.setFieldValue('estado', value)}
-              value={formik.values.estado}
-            >
-              <SelectTrigger className="h-12 w-full rounded-xl border-border bg-surface text-foreground focus:ring-primary shadow-sm px-4">
-                <SelectValue placeholder="Selecciona estado" />
-              </SelectTrigger>
-              <SelectContent className="rounded-xl border-border">
-                <SelectItem value="DISPONIBLE">Disponible</SelectItem>
-                <SelectItem value="ADOPTADO">Adoptado</SelectItem>
-              </SelectContent>
-            </Select>
-            {formik.touched.estado && formik.errors.estado && (
-              <span className="text-xs text-red-500 font-medium flex items-center gap-1 mt-1">
-                <AlertCircle size={12} />
-                {formik.errors.estado}
-              </span>
-            )}
-          </div>
-        )}
       </div>
 
       {/* Descripción */}
