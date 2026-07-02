@@ -60,7 +60,7 @@ export function UsersFilters({
                     : 'Adoptante'}
             </span>
           </SelectTrigger>
-          <SelectContent className="rounded-xl border-border">
+          <SelectContent className="rounded-md border-border">
             <SelectItem value="all">Todos los roles</SelectItem>
             <SelectItem value="ADMIN">Administradores</SelectItem>
             <SelectItem value="ALBERGUE">Albergues</SelectItem>
@@ -79,7 +79,7 @@ export function UsersFilters({
                   : 'Inactivos / Baneados'}
             </span>
           </SelectTrigger>
-          <SelectContent className="rounded-xl border-border">
+          <SelectContent className="rounded-md border-border">
             <SelectItem value="all">Todos los estados</SelectItem>
             <SelectItem value="active">Activos</SelectItem>
             <SelectItem value="inactive">Inactivos / Baneados</SelectItem>

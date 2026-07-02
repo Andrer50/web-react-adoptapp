@@ -201,7 +201,7 @@ export function MyPublicationsPage() {
                       : 'Otros'}
                   </span>
                 </SelectTrigger>
-                <SelectContent className="rounded-xl border-border">
+                <SelectContent className="rounded-md border-border">
                   <SelectItem value="all">Todas las especies</SelectItem>
                   <SelectItem value="Perro">Perros</SelectItem>
                   <SelectItem value="Gato">Gatos</SelectItem>
@@ -223,7 +223,7 @@ export function MyPublicationsPage() {
                     {filterSize === 'all' ? 'Todos los tamaños' : filterSize}
                   </span>
                 </SelectTrigger>
-                <SelectContent className="rounded-xl border-border">
+                <SelectContent className="rounded-md border-border">
                   <SelectItem value="all">Todos los tamaños</SelectItem>
                   <SelectItem value="Pequeño">Pequeño</SelectItem>
                   <SelectItem value="Mediano">Mediano</SelectItem>
@@ -244,7 +244,7 @@ export function MyPublicationsPage() {
                     {filterStatus === 'all' ? 'Todos los estados' : filterStatus === 'DISPONIBLE' ? 'Disponible' : 'Adoptado'}
                   </span>
                 </SelectTrigger>
-                <SelectContent className="rounded-xl border-border">
+                <SelectContent className="rounded-md border-border">
                   <SelectItem value="all">Todos los estados</SelectItem>
                   <SelectItem value="DISPONIBLE">Disponible</SelectItem>
                   <SelectItem value="ADOPTADO">Adoptado</SelectItem>

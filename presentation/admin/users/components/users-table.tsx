@@ -123,8 +123,28 @@ export function UsersTable({ users, isLoading, isError, onEdit, onDelete }: User
             users.map((user) => (
               <TableRow key={user.id} className="hover:bg-muted/10 transition-colors">
                 <TableCell className="pl-6 py-3.5">
-                  <div className="font-semibold text-foreground">{user.username}</div>
-                  <div className="text-xs text-muted-foreground">{user.email}</div>
+                  <div className="flex items-center gap-3">
+                    <div className="relative flex size-9 shrink-0 items-center justify-center rounded-full bg-primary-container/20 text-xs font-semibold text-primary overflow-hidden border border-border/50">
+                      {user.datos_adicionales?.foto_perfil ? (
+                        <img
+                          src={user.datos_adicionales.foto_perfil as string}
+                          alt={user.username}
+                          className="h-full w-full object-cover"
+                        />
+                      ) : (
+                        (() => {
+                          const fn = user.first_name || '';
+                          const ln = user.last_name || '';
+                          const initials = (fn.charAt(0) + ln.charAt(0)).toUpperCase();
+                          return initials || user.username.charAt(0).toUpperCase() || 'U';
+                        })()
+                      )}
+                    </div>
+                    <div className="min-w-0">
+                      <div className="font-semibold text-foreground truncate">{user.username}</div>
+                      <div className="text-xs text-muted-foreground truncate">{user.email}</div>
+                    </div>
+                  </div>
                 </TableCell>
                 <TableCell className="text-muted-foreground py-3.5">
                   {user.first_name || user.last_name

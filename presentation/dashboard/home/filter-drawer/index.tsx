@@ -129,7 +129,7 @@ export function FiltersDrawer({
                   {sizeFilters.find((s) => s.id === selectedSize)?.label || 'Seleccionar tamaño'}
                 </span>
               </SelectTrigger>
-              <SelectContent className="rounded-xl border-border">
+              <SelectContent className="rounded-md border-border">
                 {sizeFilters.map((size) => (
                   <SelectItem key={size.id} value={size.id} className="rounded-md focus:bg-primary/10">
                     {size.label}

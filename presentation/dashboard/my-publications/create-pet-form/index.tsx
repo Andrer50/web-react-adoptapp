@@ -227,7 +227,7 @@ export function CreatePetForm({ pet, onSuccess }: CreatePetFormProps) {
             <SelectTrigger className="h-12 w-full rounded-xl border-border bg-surface text-foreground focus:ring-primary shadow-sm px-4">
               <SelectValue placeholder="Selecciona especie" />
             </SelectTrigger>
-            <SelectContent className="rounded-xl border-border">
+            <SelectContent className="rounded-md border-border">
               <SelectItem value="Perro">Perro</SelectItem>
               <SelectItem value="Gato">Gato</SelectItem>
               <SelectItem value="Ave">Ave</SelectItem>
@@ -324,7 +324,7 @@ export function CreatePetForm({ pet, onSuccess }: CreatePetFormProps) {
             <SelectTrigger className="h-12 w-full rounded-xl border-border bg-surface text-foreground focus:ring-primary shadow-sm px-4">
               <SelectValue placeholder="Selecciona tamaño" />
             </SelectTrigger>
-            <SelectContent className="rounded-xl border-border">
+            <SelectContent className="rounded-md border-border">
               <SelectItem value="Pequeño">Pequeño</SelectItem>
               <SelectItem value="Mediano">Mediano</SelectItem>
               <SelectItem value="Grande">Grande</SelectItem>

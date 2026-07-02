@@ -15,7 +15,7 @@ import {
 } from '@/components/ui/select';
 import { useUpdateUsuarioMutation } from '@/modules/users/domain/hooks/useUserMutations';
 import { toast } from 'sonner';
-import { Usuario } from '@/core/users/interfaces';
+import { Usuario, UpdateUsuarioRequest } from '@/core/users/interfaces';
 
 interface EditUserDialogProps {
   open: boolean;
@@ -34,20 +34,38 @@ export function EditUserDialog({ open, onOpenChange, user, onSuccess }: EditUser
       telefono: '',
       tipo_rol: 'USER' as 'ADMIN' | 'ALBERGUE' | 'USER',
       is_active: true,
+      ruc: '',
+      ubicacion: '',
+      web: '',
+      foto_perfil: '',
     },
     validationSchema: updateUsuarioSchema,
     onSubmit: (values) => {
       if (!user) return;
 
+      const payload: UpdateUsuarioRequest = {
+        id: user.id,
+        first_name: values.first_name,
+        last_name: values.last_name,
+        telefono: values.telefono,
+        tipo_rol: values.tipo_rol,
+        is_active: values.is_active,
+      };
+
+      if (values.tipo_rol === 'ALBERGUE') {
+        payload.datos_adicionales = {
+          ...(user.datos_adicionales || {}),
+          ruc: values.ruc,
+          ubicacion: values.ubicacion,
+          web: values.web,
+          foto_perfil: values.foto_perfil,
+        };
+      } else {
+        payload.datos_adicionales = user.datos_adicionales;
+      }
+
       updateMutation.mutate(
-        {
-          id: user.id,
-          first_name: values.first_name,
-          last_name: values.last_name,
-          telefono: values.telefono,
-          tipo_rol: values.tipo_rol,
-          is_active: values.is_active,
-        },
+        payload,
         {
           onSuccess: () => {
             toast.success('Usuario actualizado exitosamente');
@@ -71,6 +89,10 @@ export function EditUserDialog({ open, onOpenChange, user, onSuccess }: EditUser
         telefono: user.telefono || '',
         tipo_rol: user.tipo_rol,
         is_active: user.is_active,
+        ruc: (user.datos_adicionales?.ruc as string) || '',
+        ubicacion: (user.datos_adicionales?.ubicacion as string) || '',
+        web: (user.datos_adicionales?.web as string) || '',
+        foto_perfil: (user.datos_adicionales?.foto_perfil as string) || '',
       });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -78,7 +100,7 @@ export function EditUserDialog({ open, onOpenChange, user, onSuccess }: EditUser
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="w-full sm:max-w-md bg-surface border border-border p-6 rounded-2xl">
+      <DialogContent className="w-full sm:max-w-md bg-surface border border-border p-6 rounded-2xl max-h-[90vh] overflow-y-auto">
         <DialogHeader className="border-b border-border pb-4 mb-4">
           <DialogTitle className="text-xl font-bold text-foreground">
             Editar Usuario
@@ -149,7 +171,7 @@ export function EditUserDialog({ open, onOpenChange, user, onSuccess }: EditUser
                 <SelectTrigger className="h-11 w-full rounded-xl border-border bg-background focus:ring-primary">
                   <SelectValue placeholder="Selecciona un Rol" />
                 </SelectTrigger>
-                <SelectContent className="rounded-xl border-border">
+                <SelectContent className="rounded-md border-border">
                   <SelectItem value="USER">Adoptante / Publicador común</SelectItem>
                   <SelectItem value="ALBERGUE">Albergue de animales</SelectItem>
                   <SelectItem value="ADMIN">Administrador general</SelectItem>
@@ -160,6 +182,49 @@ export function EditUserDialog({ open, onOpenChange, user, onSuccess }: EditUser
               ) : null}
             </div>
           </div>
+
+          {formik.values.tipo_rol === 'ALBERGUE' && (
+            <div className="space-y-4 pt-4 border-t border-border">
+              <h4 className="text-xs font-bold uppercase tracking-wider text-primary">Datos del Albergue (Adicionales)</h4>
+
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <Label htmlFor="ruc" className="text-sm font-semibold">RUC</Label>
+                  <Input
+                    id="ruc"
+                    name="ruc"
+                    value={formik.values.ruc}
+                    onChange={formik.handleChange}
+                    onBlur={formik.handleBlur}
+                    className="mt-1.5 h-11 bg-background border-border rounded-xl focus:ring-primary"
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="web" className="text-sm font-semibold">Sitio Web</Label>
+                  <Input
+                    id="web"
+                    name="web"
+                    value={formik.values.web}
+                    onChange={formik.handleChange}
+                    onBlur={formik.handleBlur}
+                    className="mt-1.5 h-11 bg-background border-border rounded-xl focus:ring-primary"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <Label htmlFor="ubicacion" className="text-sm font-semibold">Ubicación</Label>
+                <Input
+                  id="ubicacion"
+                  name="ubicacion"
+                  value={formik.values.ubicacion}
+                  onChange={formik.handleChange}
+                  onBlur={formik.handleBlur}
+                  className="mt-1.5 h-11 bg-background border-border rounded-xl focus:ring-primary"
+                />
+              </div>
+            </div>
+          )}
 
           <div className="flex items-center gap-3.5 pt-2">
             <Checkbox
