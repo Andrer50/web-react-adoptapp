@@ -21,7 +21,7 @@ FROM base AS deps
 # La capa de 'deps' se usa principalmente para cachear pnpm-lock.yaml
 RUN apk update && apk add --no-cache python3 make g++ libc6-compat
 
-COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
+COPY package.json pnpm-lock.yaml ./
 
 # Instalar dependencias completas para el build
 RUN pnpm install --frozen-lockfile 
