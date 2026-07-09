@@ -10,6 +10,8 @@ import {
 } from '@/components/ui/table';
 import { Edit3, Trash2, AlertCircle, ChevronLeft, ChevronRight } from 'lucide-react';
 import { Mascota } from '@/core/pets/interfaces';
+import { getRelativeImageUrl } from '@/lib/utils';
+
 
 interface PetsTableProps {
   pets: Mascota[];
@@ -119,7 +121,7 @@ export function PetsTable({
         <TableBody>
           {pets.length > 0 ? (
             pets.map((pet) => {
-              const imageUrl = pet.fotos?.[0]?.url_imagen || '/dog_toby.png';
+              const imageUrl = getRelativeImageUrl(pet.fotos?.[0]?.url_imagen) || '/dog_toby.png';
               return (
                 <TableRow key={pet.id} className="hover:bg-muted/10 transition-colors">
                   <TableCell className="pl-6 py-3.5">

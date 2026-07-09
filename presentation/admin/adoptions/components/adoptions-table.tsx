@@ -10,6 +10,8 @@ import {
 } from '@/components/ui/table';
 import { HeartHandshake, AlertCircle, Trash2 } from 'lucide-react';
 import { Adopcion } from '@/core/adoptions/interfaces';
+import { getRelativeImageUrl } from '@/lib/utils';
+
 
 interface AdoptionsTableProps {
   adoptions: Adopcion[];
@@ -98,7 +100,7 @@ export function AdoptionsTable({ adoptions, isLoading, isError, onDelete }: Adop
             adoptions.map((adoption) => {
               const pet = adoption.mascota_detalle;
               const adopter = adoption.adoptante_detalle;
-              const imageUrl = pet?.fotos?.[0]?.url_imagen || '/dog_toby.png';
+              const imageUrl = getRelativeImageUrl(pet?.fotos?.[0]?.url_imagen) || '/dog_toby.png';
 
               return (
                 <TableRow key={adoption.id} className="hover:bg-muted/10 transition-colors">

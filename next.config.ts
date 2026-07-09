@@ -2,10 +2,13 @@ import type { NextConfig } from 'next';
 
 const backendUrl = process.env.BACKEND_URL;
 let backendHost = '';
+let backendPort = '';
 
 if (backendUrl) {
   try {
-    backendHost = new URL(backendUrl).hostname;
+    const urlObj = new URL(backendUrl);
+    backendHost = urlObj.hostname;
+    backendPort = urlObj.port;
   } catch (e) {
     // fallback
   }
@@ -34,11 +37,13 @@ const nextConfig: NextConfig = {
             {
               protocol: 'https' as const,
               hostname: backendHost,
+              port: backendPort || undefined,
               pathname: '/media/**',
             },
             {
               protocol: 'http' as const,
               hostname: backendHost,
+              port: backendPort || undefined,
               pathname: '/media/**',
             },
           ]
@@ -51,8 +56,13 @@ const nextConfig: NextConfig = {
         source: '/api/:path((?!auth/).*)',
         destination: `${process.env.BACKEND_URL || 'http://localhost:8000'}/api/:path*`,
       },
+      {
+        source: '/media/:path*',
+        destination: `${process.env.BACKEND_URL || 'http://localhost:8000'}/media/:path*`,
+      },
     ];
   },
 };
 
 export default nextConfig;
+

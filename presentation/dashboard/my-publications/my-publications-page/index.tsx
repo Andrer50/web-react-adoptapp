@@ -43,6 +43,8 @@ import {
 } from '@/components/ui/table';
 import { CreatePetForm } from '../create-pet-form';
 import { useGetMascotasQuery } from '@/modules/pets/domain/hooks/usePetQueries';
+import { getRelativeImageUrl } from '@/lib/utils';
+
 import { toast } from 'sonner';
 import { Mascota } from '@/core/pets/interfaces';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
@@ -329,7 +331,7 @@ export function MyPublicationsPage() {
                   </TableRow>
                 ) : myPets.length > 0 ? (
                   myPets.map((pet) => {
-                    const imageUrl = pet.fotos?.[0]?.url_imagen || '/dog_toby.png';
+                    const imageUrl = getRelativeImageUrl(pet.fotos?.[0]?.url_imagen) || '/dog_toby.png';
                     return (
                       <TableRow key={pet.id} className="hover:bg-muted/10 transition-colors">
                         <TableCell className="pl-6 py-3.5">

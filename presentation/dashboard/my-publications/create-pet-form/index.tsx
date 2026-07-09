@@ -33,6 +33,8 @@ import {
   useUploadImageMutation,
   useUpdateMascotaMutation,
 } from '@/modules/pets/domain/hooks/usePetMutations';
+import { getRelativeImageUrl } from '@/lib/utils';
+
 
 const calculateAgeString = (birthDate: Date): string => {
   const today = new Date();
@@ -418,7 +420,7 @@ export function CreatePetForm({ pet, onSuccess }: CreatePetFormProps) {
                 >
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img
-                    src={foto.url_imagen}
+                    src={getRelativeImageUrl(foto.url_imagen)}
                     alt={`Preview ${index + 1}`}
                     className="h-full w-full object-cover"
                     onError={(e) => {

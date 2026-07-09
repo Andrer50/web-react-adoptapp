@@ -6,6 +6,7 @@ import { Card, CardContent, CardTitle, CardDescription } from '@/components/ui/c
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Mascota } from '@/core/pets/interfaces';
+import { getRelativeImageUrl } from '@/lib/utils';
 
 interface MyPublicationCardProps {
     pet: Mascota;
@@ -14,7 +15,8 @@ interface MyPublicationCardProps {
 }
 
 export function MyPublicationCard({ pet, onEdit, onDelete }: MyPublicationCardProps) {
-    const imageUrl = pet.fotos?.[0]?.url_imagen || '/dog_toby.png';
+    const imageUrl = getRelativeImageUrl(pet.fotos?.[0]?.url_imagen) || '/dog_toby.png';
+
 
     return (
         <Card className="relative overflow-hidden border border-outline-variant/20 bg-surface shadow-sm">

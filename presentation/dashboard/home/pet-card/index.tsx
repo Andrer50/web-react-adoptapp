@@ -4,6 +4,8 @@ import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import { Calendar, Palette, Ruler, ChevronLeft, ChevronRight, Heart, MapPin } from 'lucide-react';
 import { Mascota } from '@/core/pets/interfaces';
+import { getRelativeImageUrl } from '@/lib/utils';
+
 
 interface PetCardProps {
     pet: Mascota;
@@ -39,7 +41,7 @@ export function PetCard({ pet, isFavorite, onToggleFavorite }: PetCardProps) {
                     pet.fotos.map((foto, index) => (
                         <Image 
                             key={foto.id || index}
-                            src={foto.url_imagen} 
+                            src={getRelativeImageUrl(foto.url_imagen)} 
                             alt={`${pet.nombre} - Foto ${index + 1}`} 
                             fill 
                             className={`object-cover transition-all duration-500 ease-in-out ${
