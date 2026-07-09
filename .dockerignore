@@ -1,0 +1,17 @@
+# Archivos innecesarios en build
+node_modules
+npm-debug.log
+Dockerfile
+docker-compose.yml
+deploy/
+.git
+.gitignore
+README.md
+
+# Archivos locales o de entorno
+.env.local
+.env.development
+.env.test
+.vscode
+.idea
+.DS_Store
