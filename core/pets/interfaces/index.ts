@@ -14,6 +14,7 @@ export interface Mascota {
   descripcion: string;
   estado: 'DISPONIBLE' | 'ADOPTADO';
   publicador: number;
+  publicador_telefono?: string;
   fotos: Foto[];
 }
 

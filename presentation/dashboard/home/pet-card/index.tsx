@@ -5,6 +5,7 @@ import Image from 'next/image';
 import { Calendar, Palette, Ruler, ChevronLeft, ChevronRight, Heart, MapPin } from 'lucide-react';
 import { Mascota } from '@/core/pets/interfaces';
 import { getRelativeImageUrl } from '@/lib/utils';
+import { toast } from 'sonner';
 
 
 interface PetCardProps {
@@ -17,6 +18,23 @@ export function PetCard({ pet, isFavorite, onToggleFavorite }: PetCardProps) {
     const [currentImageIndex, setCurrentImageIndex] = useState(0);
     const [isHovered, setIsHovered] = useState(false);
     const hasMultipleImages = pet.fotos && pet.fotos.length > 1;
+
+    const handleAdoptClick = () => {
+        if (!pet.publicador_telefono) {
+            toast.error('Este albergue o usuario no cuenta con un teléfono de contacto registrado.');
+            return;
+        }
+
+        let phoneClean = pet.publicador_telefono.replace(/\D/g, '');
+        if (phoneClean.length === 9) {
+            phoneClean = '51' + phoneClean;
+        }
+
+        const message = `Hola, estoy interesado en adoptar a ${pet.nombre}`;
+        const url = `https://wa.me/${phoneClean}?text=${encodeURIComponent(message)}`;
+        
+        window.open(url, '_blank', 'noopener,noreferrer');
+    };
 
     // Efecto de cambio automático de imagen
     useEffect(() => {
@@ -191,9 +209,16 @@ export function PetCard({ pet, isFavorite, onToggleFavorite }: PetCardProps) {
                         <MapPin size={15} className="text-primary animate-pulse" />
                         <span>Publicada en AdoptApp</span>
                     </div>
-                    <span className="flex items-center text-xs font-bold text-primary opacity-0 group-hover/card:opacity-100 transition-all duration-300 -translate-x-2 group-hover/card:translate-x-0">
+                    <button
+                        type="button"
+                        onClick={(e) => {
+                            e.stopPropagation();
+                            handleAdoptClick();
+                        }}
+                        className="flex items-center text-xs font-bold text-primary opacity-0 group-hover/card:opacity-100 transition-all duration-300 -translate-x-2 group-hover/card:translate-x-0 cursor-pointer hover:underline border-none bg-transparent p-0"
+                    >
                         Adoptar <ChevronRight size={14} className="ml-0.5 transition-transform duration-300 group-hover/card:translate-x-0.5" />
-                    </span>
+                    </button>
                 </div>
             </div>
         </div>
