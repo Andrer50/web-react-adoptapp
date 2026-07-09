@@ -1,6 +1,18 @@
 import type { NextConfig } from 'next';
 
+const backendUrl = process.env.BACKEND_URL;
+let backendHost = '';
+
+if (backendUrl) {
+  try {
+    backendHost = new URL(backendUrl).hostname;
+  } catch (e) {
+    // fallback
+  }
+}
+
 const nextConfig: NextConfig = {
+  output: 'standalone',
   trailingSlash: true,
   images: {
     unoptimized: true,
@@ -17,6 +29,20 @@ const nextConfig: NextConfig = {
         port: '8000',
         pathname: '/media/**',
       },
+      ...(backendHost
+        ? [
+            {
+              protocol: 'https' as const,
+              hostname: backendHost,
+              pathname: '/media/**',
+            },
+            {
+              protocol: 'http' as const,
+              hostname: backendHost,
+              pathname: '/media/**',
+            },
+          ]
+        : []),
     ],
   },
   async rewrites() {
